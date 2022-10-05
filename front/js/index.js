@@ -1,4 +1,4 @@
-// Récupérer API
+// Get API //////////////////////////////
 fetch('http://localhost:3000/api/products')
     .then(res => res.json())
     .then(data => {
@@ -9,7 +9,7 @@ fetch('http://localhost:3000/api/products')
     });
 
 
-// Afficher les produits
+// Show products //////////////////////////////
 function showProducts(data) {
     for (product of data) {
         const itemCard = document.getElementById('items');
@@ -21,7 +21,41 @@ function showProducts(data) {
           <p class="productDescription">${product.description}</p>
         </article>
         </a>
-      `; 
+      `;
     }
 }
+
+
+// Link products to Product page //////////////////////////////
+
+// Get product ID from URL 
+let params = new URLSearchParams(document.location.search);
+let productId = params.get("id");
+
+// Get elements from HTML
+const image = document.getElementsByClassName("item__img");
+const title = document.getElementById("title");
+const price = document.getElementById("price");
+const description = document.getElementById("description");
+const colors = document.getElementById("colors");
+let imageAlt = "";
+
+// Add elements from API to product page
+fetch("http://localhost:3000/api/products/" + productId)
+    .then(res => res.json())
+    .then(data => {
+
+        image[0].innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
+        imageAlt = `${data.altTxt}`;
+        title.innerHTML = `<h1 id="title">${data.name}</h1>`;
+        price.innerText = `${data.price}`;
+        description.innerText = `${data.description}`;
+
+        data.colors.forEach((option) => {
+            colors.innerHTML += `<option value="${option}">${option}</option>`;
+        });
+
+    })
+
+
 
