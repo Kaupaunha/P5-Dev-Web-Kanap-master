@@ -1,60 +1,124 @@
 // Get our cart from localstorage
+let getCart = JSON.parse(localStorage.getItem('myCart'));
 
-let myCart = JSON.parse(localStorage.getItem('myCart'));
+// GET API
+fetch("http://localhost:3000/api/products")
+    .then(function (res) {
+        if (res.ok) {
+            return res.json();
+        }
+    })
+    .then(function () {
+        let panier = getCart;
+        // show cart
+        displayCart(panier);
+    })
 
 
 
+// DISPLAY PRODUCTS FROM OUR CART ///////////////////////////////////////////////////////////////////////////////////////////////////
+function displayCart(panier) {
+    let fragment = document.createDocumentFragment();
 
-// DISPLAY PRODUCTS FROM OUR CART //////////////////////////////////////////////////////////////////////////////////////////////////////
+    for (let product of panier) {
+        // create article element
+        let article = document.createElement("article");
+        article.setAttribute("class", "cart__item");
+        article.setAttribute("id", `${product.ID}`);
+        article.setAttribute("data-color", `${product.Color}`);
 
-// create an array to put items inside it 
-let itemCards = [];
+        // create first div
+        let firstDiv = document.createElement("div");
+        firstDiv.classList.add("cart__item__img");
 
-// create a loop to take each element from our cart 
-for (i = 0; i < myCart.length; i++) {
+        let img = document.createElement("img");
+        img.src = product.Picture;
+        img.alt = product.PictureTxt;
+        firstDiv.appendChild(img);
+        article.appendChild(firstDiv);
 
-  itemCards = itemCards + `
-    
-    <article class="cart__item" data-id="${myCart[i].ID}" data-color="${myCart.Color}">
-    <div class="cart__item__img">
-      <img src="${myCart[i].Picture}" alt="${myCart[i].PictureTxt}">
-    </div>
-    <div class="cart__item__content">
-      <div class="cart__item__content__titlePrice">
-        <h2>${myCart[i].Name}</h2>
-        <p>${myCart[i].Color}</p>
-        <p>${myCart[i].Price} €</p>
-      </div>
-      <div class="cart__item__content__settings">
-        <div class="cart__item__content__settings__quantity">
-          <p>Qté : </p>
-          <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${myCart[i].Quantity}">
-        </div>
-        <div class="cart__item__content__settings__delete">
-          <p class="deleteItem">Supprimer</p>
-        </div>
-      </div>
-    </div>
-  </article>
-    `;
+        // create second div
+        let secondDiv = document.createElement("div");
+        secondDiv.classList.add("cart__item__content");
+
+        // sub div 1
+        let secondDivOne = document.createElement("div");
+        secondDivOne.classList.add("cart__item__content__description");
+
+        let name = document.createElement("h2");
+        name.textContent = product.Name;
+        secondDivOne.appendChild(name);
+
+        let color = document.createElement("p");
+        color.textContent = product.Color;
+        secondDivOne.appendChild(color);
+
+        let price = document.createElement("p");
+        price.textContent = product.Price + "€";
+        secondDivOne.appendChild(price);
+
+        secondDiv.appendChild(secondDivOne);
+
+        // sub div 2 
+        let secondDivTwo = document.createElement("div");
+        secondDivTwo.classList.add("cart__item__content__settings");
+
+        let secondDivTwoOne = document.createElement("div");
+        secondDivTwoOne.classList.add("cart__item__content__settings__quantity");
+
+        let quantity = document.createElement("p");
+        quantity.textContent = "Qté : ";
+
+        let input = document.createElement("input");
+        input.type = "number";
+        input.classList.add("itemQuantity");
+        input.name = "itemQuantity";
+        input.min = 1;
+        input.max = 100;
+        input.value = product.Quantity;
+        input.setAttribute("data-id", `${product.ID}`);
+        input.setAttribute("data-quantity", product.Quantity);
+        input.setAttribute("data-color", `${product.Color}`);
+
+
+
+        secondDivTwoOne.appendChild(quantity);
+        secondDivTwoOne.appendChild(input);
+        secondDivTwo.appendChild(secondDivTwoOne);
+        secondDiv.appendChild(secondDivTwo);
+
+        // sub div 3 
+        let secondDivThree = document.createElement("div");
+        secondDivThree.classList.add("cart__item__content__settings__delete");
+
+        let deleteItem = document.createElement("p");
+        deleteItem.classList.add("deleteItem");
+        deleteItem.textContent = "Supprimer";
+        // add attributes to deleteItem for deleteItem function
+        deleteItem.setAttribute("data-id", `${product.ID}`);
+        deleteItem.setAttribute("data-color", `${product.Color}`);
+
+        secondDivThree.appendChild(deleteItem);
+        secondDiv.appendChild(secondDivThree);
+
+        article.appendChild(secondDiv);
+
+        fragment.appendChild(article);
+    }
+    document.querySelector("#cart__items").appendChild(fragment);
 }
-if (i === myCart.length) {
-  const displayCart = document.getElementById('cart__items');
-  displayCart.innerHTML += itemCards;
-}
-
 
 
 // Display products quantity
 function showProductQuantity() {
-  let totalQuantity = 0;
-  const showProductQuantity = document.querySelector("#totalQuantity");
+    let totalQuantity = 0;
+    const showProductQuantity = document.querySelector("#totalQuantity");
 
-  for (let i in myCart) {
-    totalQuantity += myCart[i].Quantity;
-  }
+    for (let i in getCart) {
+        totalQuantity += getCart[i].Quantity;
+    }
 
-  showProductQuantity.innerHTML = totalQuantity;
+    showProductQuantity.innerHTML = totalQuantity;
 }
 showProductQuantity();
 
@@ -62,14 +126,14 @@ showProductQuantity();
 
 // Display total price 
 function showTotalPrice() {
-  let totalPrice = 0;
-  const showPrice = document.querySelector("#totalPrice");
+    let totalPrice = 0;
+    const showPrice = document.querySelector("#totalPrice");
 
-  for (let i in myCart) {
-    totalPrice += myCart[i].Price * myCart[i].Quantity;
-  }
+    for (let i in getCart) {
+        totalPrice += getCart[i].Price * getCart[i].Quantity;
+    }
 
-  showPrice.innerHTML = totalPrice;
+    showPrice.innerHTML = totalPrice;
 }
 showTotalPrice();
 
@@ -77,27 +141,23 @@ showTotalPrice();
 
 // DELETE ITEMS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function deleteItem() {
-  const deleteButton = document.querySelectorAll('.deleteItem');
+    document.addEventListener('click', function (event) {
+        if (event.target.classList.value == "deleteItem") {
+            let deleteId = event.target.getAttribute("data-id");
+            let deleteColor = event.target.getAttribute("data-color");
 
-  for (let i = 0; i < deleteButton.length; i++) {
-    deleteButton[i].addEventListener('click', (event) => {
-      event.preventDefault();
+            // use filter to keep elements that were not deleted 
+            myCart = getCart.filter(elt => elt.ID !== deleteId || elt.Color !== deleteColor);
 
-      // get ID and Color from delete button
-      let deleteId = myCart[i].ID;
-      let deleteColor = myCart[i].Color;
+            // send remaining elements to localstorage
+            localStorage.setItem('myCart', JSON.stringify(myCart));
 
-      // use filter to keep elements that were not deleted 
-      myCart = myCart.filter(elt => elt.ID !== deleteId || elt.Color !== deleteColor);
+            alert('Votre article a bien été supprimé.');
 
-      // send remaining elements to localstorage
-      localStorage.setItem('myCart', JSON.stringify(myCart));
-
-      alert('Votre article a bien été supprimé.');
-
-      location.reload();
+            let deleteButton = document.getElementById(deleteId);
+            deleteButton.remove();
+        }
     });
-  }
 }
 deleteItem();
 
@@ -105,28 +165,35 @@ deleteItem();
 
 // CHANGE PRODUCTS QUANTITY ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function changeQuantity() {
-  const getQuantity = document.querySelectorAll(".itemQuantity");
+    document.addEventListener('change', function (event) {
+        if (event.target.classList.value == "itemQuantity") {
+            // on récupère la quantité sélectionnée
+            getQuantity = event.target.valueAsNumber;
 
-  // create a loop to listen every .itemQuantity changes
-  for (let i = 0; i < getQuantity.length; i++) {
-    getQuantity[i].addEventListener("change", function () {
+            // on récupère l'ancienne quantité
+            const oldQuantity = event.target.getAttribute("data-quantity");
 
-      const oldQuantity = myCart[i].Quantity;
-      const quantityChanged = getQuantity[i].valueAsNumber;
+            // on récupère l'ID du produit
+            const getId = event.target.getAttribute("data-id");
 
-      // check if new quantity is different from old quantity
-      if (quantityChanged !== oldQuantity) {
-        if (quantityChanged >= 1) {
-          myCart[i].Quantity = quantityChanged;
+            // on récupère la couleur du produit
+            const getColor = event.target.getAttribute("data-color");
+
+            // on cherche le produit correspondant à l'ID du produit sélectionné dans le panier
+            let myCart = getCart.find(id => id.ID == getId && id.Color == getColor);
+
+
+            if (getQuantity !== oldQuantity && getId == myCart.ID) {
+                if (getQuantity >= 1) {
+                    myCart.Quantity = getQuantity;
+                    getCart.Quantity = myCart.Quantity;
+                }
+            }
+            localStorage.setItem("myCart", JSON.stringify(getCart));
+            location.reload();
         }
-      }
 
-      localStorage.setItem("myCart", JSON.stringify(myCart));
-      location.reload();
     })
-
-  }
-
 }
 changeQuantity();
 
@@ -200,7 +267,7 @@ inputControl();
 
 
 
-// SEND CONTACT INFORMATIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SEND ORDER INFORMATIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const submitButton = document.querySelector("#order");
 
 submitButton.addEventListener("click", (event) => {
@@ -209,8 +276,8 @@ submitButton.addEventListener("click", (event) => {
   if (firstName.value !== "" && lastName.value !== "" && address.value !== "" && city.value !== "" && email.value !== "") {
     let productsBought = [];
 
-    for (let i = 0; i < myCart.length; i++) {
-      productsBought.push(myCart[i].ID);
+    for (let i = 0; i < getCart.length; i++) {
+      productsBought.push(getCart[i].ID);
     }
 
     const customerInfo = {
