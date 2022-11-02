@@ -13,21 +13,20 @@ fetch("http://localhost:3000/api/products")
     // DISPLAY CART
     let showCart = new Cart();
     showCart.displayCart(panier);
-    // displayCart(panier);
   })
 
 
   // CART MODIFICATIONS
-  let totalQuantity = new DisplayTotal();
+  let totalQuantity = new Cart();
   totalQuantity.showProductQuantity();
 
-  let totalPrice = new DisplayTotal();
+  let totalPrice = new Cart();
   totalPrice.showTotalPrice();
 
-  let deleteProduct = new ModifyCart();
+  let deleteProduct = new Cart();
   deleteProduct.deleteItem();
 
-  let modifyQuantity = new ModifyCart();
+  let modifyQuantity = new Cart();
   modifyQuantity.changeQuantity();
 
 

@@ -1,4 +1,3 @@
-
 class Cart {
     // DISPLAY CART CONTENT ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     displayCart(panier) {
@@ -91,10 +90,7 @@ class Cart {
         }
         document.querySelector("#cart__items").appendChild(fragment);
     }
-}
 
-class DisplayTotal {
-    // DISPLAY PRODUCTS QUANTITY ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     showProductQuantity() {
         let totalQuantity = 0;
         const showProductQuantity = document.querySelector("#totalQuantity");
@@ -106,8 +102,6 @@ class DisplayTotal {
         showProductQuantity.innerHTML = totalQuantity;
     }
 
-
-    // DISPLAY TOTAL PRICE ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     showTotalPrice() {
         let totalPrice = 0;
         const showPrice = document.querySelector("#totalPrice");
@@ -118,10 +112,7 @@ class DisplayTotal {
 
         showPrice.innerHTML = totalPrice;
     }
-}
 
-class ModifyCart {
-    // DELETE ITEMS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     deleteItem() {
         document.addEventListener('click', function (event) {
             if (event.target.classList.value == "deleteItem") {
@@ -136,15 +127,11 @@ class ModifyCart {
 
                 alert('Votre article a bien été supprimé.');
 
-                // let deleteButton = document.getElementById(deleteId);
-                // deleteButton.remove();
                 location.reload();
             }
         });
     }
 
-
-    // CHANGE PRODUCTS QUANTITY ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     changeQuantity() {
         document.addEventListener('change', function (event) {
             if (event.target.classList.value == "itemQuantity") {
@@ -176,64 +163,7 @@ class ModifyCart {
 
         })
     }
+
 }
 
-class CheckForm {
-    // CHECK INPUT VALIDITY ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    inputControl() {
 
-        // First name control
-        const firstNameError = document.querySelector("#firstNameErrorMsg");
-        firstName.addEventListener("change", (event) => {
-            if (/^[A-Za-zéèê-ïë]+$/.test(event.target.value)) {
-                firstNameError.innerHTML = "";
-            } else {
-                firstNameError.innerHTML = "Veuillez n'écrire que des lettres";
-            }
-        })
-
-
-        // Last name control
-        const lastNameError = document.querySelector("#lastNameErrorMsg");
-        lastName.addEventListener("change", (event) => {
-            if (/^[A-Za-zéèê-ïë]+$/.test(event.target.value)) {
-                lastNameError.innerHTML = "";
-            } else {
-                lastNameError.innerHTML = "Veuillez n'écrire que des lettres";
-            }
-        })
-
-
-        // Address control
-        const addressError = document.querySelector("#addressErrorMsg");
-        address.addEventListener("change", (event) => {
-            if (/^\d{1,5}[a-zA-Zéêëèîïâäçù ,'-]+$/.test(event.target.value)) {
-                addressError.innerHTML = "";
-            } else {
-                addressError.innerHTML = "Veuillez indiquer une adresse correcte";
-            }
-        })
-
-
-        // City control
-        const cityError = document.querySelector("#cityErrorMsg");
-        city.addEventListener("change", (event) => {
-            if (/^[a-zA-Zéêëèîïâäçù ,'-]+$/.test(event.target.value)) {
-                cityError.innerHTML = "";
-            } else {
-                cityError.innerHTML = "Veuillez indiquer une ville correcte";
-            }
-        })
-
-
-        // Email control
-        const emailError = document.querySelector("#emailErrorMsg");
-        email.addEventListener("change", (event) => {
-            if (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(event.target.value)) {
-                emailError.innerHTML = "";
-            } else {
-                emailError.innerHTML = "Veuillez indiquer une adresse email correcte";
-            }
-        })
-    }
-}
